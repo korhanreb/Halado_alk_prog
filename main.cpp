@@ -1,33 +1,41 @@
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
-double sq(double x)
+double func(double x)
 {
-    return x*x;
+    return cos(x) * std::exp(-x * x);
 }
 
-//solve a*x*x+b*x+c = 0
-void solve2(double a, double b, double c)
+double integrate(int n, double x0, double x1)
 {
-  double D=sq(b)-4*a*c;
-  if(D <0.0 )
-  {
-    std::cout << "No solution\n";
-  }
-  else if(D==0.0)
-  {
-    std::cout << "The solution is: " << -b/(2*a) << "\n";
-  }
-  else
-  {
-    std::cout << "The solutions are: " << (-b+sqrt(D))/(2*a) << " and " << (-b-sqrt(D))/(2*a) <<"\n";
-  }
-  
+    double sum = 0.0;
+    double h = (x1 - x0) / n; // ahol x1>x0
+    //if ( x1 > x0 ){double h = (x1 - x0) / n;} --valamiért nem működik
+    //else {double h = (-x1 + x0) / n;}
+    
+    for(int i = 0; i <= n ; i++)
+    {
+        sum += func(x0 + i * h);
+    }
+
+    return h * sum;
 }
 
- 
+void test(int j, int d,  double x0, double x1) // hányszor, milyen lépésközzel, integrate fgv. határai
+{
+    double I=1.34638795680345037669816;
+    for(int i=1; i<j; ++i)
+    {
+        std::cout <<integrate(i*d, x0, x1)-I << std::endl;
+    }
+}
+
 int main()
 {
-    solve2(1, 1, 1);
+    std::cout.precision(16);
+
+    std::cout <<integrate(10, -1 , 3) << std::endl;
+    test(20, 20,  -1, 3);
     return 0;
 }
+
