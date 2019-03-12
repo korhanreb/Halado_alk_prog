@@ -1,33 +1,30 @@
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
-template <typename T> T new_x(T num, T x)
+template <typename T, typename Q1, typename Q2>
+T Newton(Q1 func, Q2 func_der, T x0)
 {
-    T func = x * x -num;
-    T func_der = 2 * x;
-   
-    return x - func / func_der;
-}
-
-template <typename Q> Q sqrt_newton(Q num, Q x0)
-{
+    T x1;
+    int n = 0;
     double stop = 1E-5;
-    Q x1;
     do
     {
         x1 = x0;
-        x0 = new_x<Q>(num, x0);
-    }while(std::abs(x1 - x0) >= stop);
-    
-    return x1;
+        x0 = x0 - func(x0) / func_der(x0);
+
+        n++;
+    }while(std::abs(x1 - x0) >= stop || n==20);
+
+    return x0;
 }
 
 
 int main()
 {
-    std::cout.precision(16);
+    std::cout.precision(16);    
+
+    std::cout << Newton<double>([](double x){ return x*x - 612.0; }, [](double x){ return 2.0*x; }, 10.0) << std::endl;
     
-    std::cout << sqrt_newton<double>(52, 4) << std::endl;
 
     return 0;
 }
