@@ -9,9 +9,10 @@ double func(double x)
 double integrate(int n, double x0, double x1)
 {
     double sum = 0.0;
-    double h = (x1 - x0) / n; // ahol x1>x0
-    //if ( x1 > x0 ){double h = (x1 - x0) / n;} --valamiért nem működik
-    //else {double h = (-x1 + x0) / n;}
+    //double h = (x1 - x0) // ahol x1>x0
+    double h ;
+    if ( x1 > x0 ){h = (x1 - x0) / n;} 
+    else {h = (-x1 + x0) / n;}
     
     for(int i = 0; i <= n ; i++)
     {
