@@ -16,8 +16,9 @@ std::vector<double> average_vec(std::vector<double> const& v)
 
 std::vector<double>  transformed(std::vector<double> const& v)
 {
+    std::vector<double> w = average_vec(v);
     std::vector<double> n = v;
-    std::transform( n.begin(), n.end(), average_vec(v), n, std::plus<double>()) ;
+    std::transform( n.begin(), n.end(), w.begin(), n.begin(), std::plus<double>()) ;
     return n;
 }
 
@@ -48,7 +49,7 @@ int main() {
     double XY=product(tr_X, tr_Y);
     double X_sqsum =accumulate(X.begin(), X.end(), 0, func_sq_sum );
 
-    std::array<int, 2> sol = {XY/X_sqsum, av_Y[0]-av_X[0]*XY/X_sqsum};
+    std::array<double, 2> sol = {XY/X_sqsum, av_Y[0]-av_X[0]*XY/X_sqsum};
 
     std::cout << "m = " << sol[0] <<std::endl;
     std::cout << "b = " << sol[1] <<std::endl;    
