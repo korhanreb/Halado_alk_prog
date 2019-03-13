@@ -5,33 +5,31 @@
 #include <numeric>
 #include <algorithm>
 
-std::vector<double> average_vec(std::vector<double> const& v)
+double average_vec(std::vector<double> const& v)
 {
     int n = static_cast<int>(v.size());
     double a= accumulate( v.begin(), v.end(), 0.0)/n;
-    std::vector<double> k = v;
-    fill(k.begin(), k.end(), -1*a);
-    return k;
+    return a;
 }
 
-std::vector<double>  transformed(std::vector<double> const& v)
-{
-    std::vector<double> w = average_vec(v);
-    std::vector<double> n = v;
-    std::transform( n.begin(), n.end(), w.begin(), n.begin(), std::plus<double>()) ;
-    return n;
-}
-
-
-double func_sq_sum (double a, double b)
-    { 
-        return a + b*b;
-    }
 
 double product(std::vector<double> const& a, std::vector<double> const& b)
-    {
-    return std::inner_product(a.begin(), a.end(), b.begin(), 0.0);
-    }
+{
+    double av_a= average_vec(a);
+    double av_b= average_vec(b);
+
+    return std::inner_product(a.begin(), a.end(), b.begin(), 0.0, [](double a, double b)->double {return a+b;}, [av_a, av_b](double a, double b)-> double {return (a-av_a)*(b-av_b); });
+}
+
+
+double av_product(std::vector<double> const& a, std::vector<double> const& b)
+{
+    double av_a= average_vec(a)*average_vec(a);
+    double av_b= average_vec(b)*average_vec(b);
+    int n = static_cast<int>(a.size());
+
+    return std::inner_product(a.begin(), a.end(), b.begin(), 0.0)/n;
+}
 
 
 
@@ -39,19 +37,21 @@ double product(std::vector<double> const& a, std::vector<double> const& b)
 
 int main() {
     std::vector<double> X = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0};
-    std::vector<double> Y = {3.2, 4.9, 7.3, 8.7, 11.5, 12.6, 15.4};
+    std::vector<double> Y = {3.1, 5.5, 6.8, 8.90, 11.2, 13.0, 15.0};
 
-    std::vector<double> av_X=average_vec(X);
-    std::vector<double> av_Y=average_vec(Y);
-    std::vector<double> tr_X=transformed(X);
-    std::vector<double> tr_Y=transformed(Y);
-
-    double XY=product(tr_X, tr_Y);
-    double X_sqsum =accumulate(X.begin(), X.end(), 0, func_sq_sum );
-
-    std::array<double, 2> sol = {XY/X_sqsum, av_Y[0]-av_X[0]*XY/X_sqsum};
+    double XY=product(X, Y);
+    double X_sqsum =product(X,X);
+    std::array<double, 2> sol = {XY/X_sqsum, average_vec(Y)-average_vec(X)*XY/X_sqsum};
 
     std::cout << "m = " << sol[0] <<std::endl;
-    std::cout << "b = " << sol[1] <<std::endl;    
+    std::cout << "b = " << sol[1] <<std::endl;   
 
+    //r^2
+
+    double sq_r = (av_product(X,Y)-average_vec(Y)*average_vec(X))*(av_product(X,Y)-average_vec(Y)*average_vec(X))/
+                  ((av_product(X,X)-average_vec(X)*average_vec(X))*(av_product(Y,Y)-average_vec(Y)*average_vec(Y)));
+    
+    std::cout << "sq_r = " << sq_r <<std::endl;               
+
+    return 0;
 }
