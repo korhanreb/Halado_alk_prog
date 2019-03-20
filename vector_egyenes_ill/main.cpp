@@ -8,27 +8,36 @@
 double average_vec(std::vector<double> const& v)
 {
     int n = static_cast<int>(v.size());
-    double a= accumulate( v.begin(), v.end(), 0.0)/n;
-    return a;
+    return accumulate( v.begin(), v.end(), 0.0)/n;
 }
 
 
-double product(std::vector<double> const& a, std::vector<double> const& b)
+
+std::array<double, 3> illesztes(std::vector<double> const& x, std::vector<double> const& y)
 {
-    double av_a= average_vec(a);
-    double av_b= average_vec(b);
+    double av_x= average_vec(x);
+    double av_y= average_vec(y);
+    int n = static_cast<int>(x.size());
 
-    return std::inner_product(a.begin(), a.end(), b.begin(), 0.0, [](double a, double b)->double {return a+b;}, [av_a, av_b](double a, double b)-> double {return (a-av_a)*(b-av_b); });
-}
+    auto product=[av_x, av_y](std::vector<double> const& a, std::vector<double> const& b)->double
+    {
+        return std::inner_product(a.begin(), a.end(), b.begin(), 0.0, [](double a, double b)->double {return a+b;}, [av_x, av_y](double a, double b)-> double {return (a-av_x)*(b-av_y);});
+    };
 
+    auto product2=[av_x, av_y, n](std::vector<double> const& a, std::vector<double> const& b)->double
+    {
+        return std::inner_product(a.begin(), a.end(), b.begin(), 0.0)/n;
+    };
 
-double av_product(std::vector<double> const& a, std::vector<double> const& b)
-{
-    double av_a= average_vec(a)*average_vec(a);
-    double av_b= average_vec(b)*average_vec(b);
-    int n = static_cast<int>(a.size());
+    double szamlalo = product(x, y);
+    double nevezo   = product(x, x);
 
-    return std::inner_product(a.begin(), a.end(), b.begin(), 0.0)/n;
+    double m=szamlalo/nevezo;
+    double b=av_y-av_x*m;
+    double sq_r=(product2(x,y)-av_y*av_x)*(product2(x,y)-av_y*av_x)/
+                  ((product2(x,x)-av_x*av_x)*(product2(y,y)-av_y*av_y));
+
+    return {m, b, sq_r};          
 }
 
 
@@ -36,22 +45,23 @@ double av_product(std::vector<double> const& a, std::vector<double> const& b)
 
 
 int main() {
-    std::vector<double> X = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0};
-    std::vector<double> Y = {3.1, 5.5, 6.8, 8.90, 11.2, 13.0, 15.0};
+    std::cout.precision(16);
 
-    double XY=product(X, Y);
-    double X_sqsum =product(X,X);
-    std::array<double, 2> sol = {XY/X_sqsum, average_vec(Y)-average_vec(X)*XY/X_sqsum};
+    std::vector<double> X = {3.0, 8.0,10.0, 17.0, 24.0, 27.0};
+    std::vector<double> Y = {2.0, 8.0, 10.0, 13.0, 18.0, 20.0};
+    std::array<double, 3> sol=illesztes(X,Y);
 
-    std::cout << "m = " << sol[0] <<std::endl;
-    std::cout << "b = " << sol[1] <<std::endl;   
+    std::array<double, 3> test={ 0.6933979858261841, 1.547929876911596, 0.9728504570950011};
 
-    //r^2
-
-    double sq_r = (av_product(X,Y)-average_vec(Y)*average_vec(X))*(av_product(X,Y)-average_vec(Y)*average_vec(X))/
-                  ((av_product(X,X)-average_vec(X)*average_vec(X))*(av_product(Y,Y)-average_vec(Y)*average_vec(Y)));
-    
-    std::cout << "sq_r = " << sq_r <<std::endl;               
+    if(std:: abs(sol[0]-test[0])>1e-14 ||std:: abs(sol[1]-test[1])>1e-14 ||std:: abs(sol[2]-test[2])>1e-14 )
+    {
+        std::cout << "Rosszul számol a program :/ ";
+    }
+    else{
+        std::cout << "m = " << sol[0] <<std::endl;
+        std::cout << "b = " << sol[1] <<std::endl;   
+        std::cout << "sq_r = " << sol[2]<<std::endl; 
+    }              
 
     return 0;
 }
