@@ -31,11 +31,11 @@ std::array<double, 3> illesztes(std::vector<double> const& x, std::vector<double
 
     double szamlalo = product(x, y);
     double nevezo   = product(x, x);
+    double p=product2(x,y)-av_y*av_x;
 
     double m=szamlalo/nevezo;
     double b=av_y-av_x*m;
-    double sq_r=(product2(x,y)-av_y*av_x)*(product2(x,y)-av_y*av_x)/
-                  ((product2(x,x)-av_x*av_x)*(product2(y,y)-av_y*av_y));
+    double sq_r=p*p / ((product2(x,x)-av_x*av_x)*(product2(y,y)-av_y*av_y));
 
     return {m, b, sq_r};          
 }
