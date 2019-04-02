@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 
 template<typename T>
 struct Vector2d
@@ -8,32 +9,32 @@ struct Vector2d
 	template<typename T2>
 	Vector2d<T>& operator+=( Vector2d<T2> const& v )
 	{
-		x += v.x;
-		y += v.y;
+		x = static_cast<T>(x + v.x);;
+		y = static_cast<T>(y + v.y);
 		return *this;
 	}
 
 	template<typename T2>
     Vector2d<T>& operator-=( Vector2d<T2> const& v )
 	{
-		x -= v.x;
-		y -= v.y;
+		x = static_cast<T>(x - v.x);
+		y = static_cast<T>(y - v.y);
 		return *this;
 	}
 
 	template<typename T3>
     Vector2d& operator*=(T3 const& a)
 	{
-		x *=a;
-		y *=a;
+		x = static_cast<T>(a*x);
+		y = static_cast<T>(a*y);
 		return *this;
 	}
 
 	template<typename T3>
 	Vector2d& operator/=(T3 const& a)
 	{
-		x /=a;
-		y /=a;
+		x = static_cast<T>(x/a);
+		y = static_cast<T>(y/a);
 		return *this;
 	}
 };
@@ -63,8 +64,8 @@ auto operator*(T3 const& a , Vector2d<T> const& v)
 template<typename T, typename T3>
 auto operator*(Vector2d<T> const& v, T3 const& a )
 {
-	using T4 = decltype(a*v.x);
-	return Vector2d<T4>{ a*v.x , a*v.y};
+	using T4 = decltype(v.x*a);
+	return Vector2d<T4>{ v.x*a , v.y*a};
 }
 
 template<typename T, typename T3>
@@ -95,7 +96,6 @@ auto length(Vector2d<T> const& v)
 template<typename T>
 auto normalize(Vector2d<T> const& v)
 {
-	using T3 = decltype(v/ length(v));
 	return v/ length(v);
 }
 
