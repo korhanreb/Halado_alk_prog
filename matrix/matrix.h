@@ -10,7 +10,7 @@
 namespace detail
 {
 	template<typename V1, typename V2, typename F>
-	void transform_vector1(V1 const& v1, V2& v2, F f)
+	void transform_vector1(V1& v1, V2& v2, F f)
 	{
 		std::transform(v1.cbegin(), v1.cend(), v2.begin(), f);
 	}
@@ -39,15 +39,15 @@ class matrix
 
 
 
-		matrix<T>& operator += (matrix<T> const& m)
+		matrix<T>& operator += (matrix<T> & m)
     	{
-        	detail::transform_vector1((*this).data, (*this).data, m.data, add);
+        	detail::transform_vector1((*this).data, m.data, add);
        		return *this;
     	}
 
 		matrix<T>& operator -= (matrix<T> const& m)
     	{
-        	detail::transform_vector1((*this).data, (*this).data, m.data, sub);
+        	detail::transform_vector1((*this).data,  m.data, sub);
         	return *this;
     	}
 	
