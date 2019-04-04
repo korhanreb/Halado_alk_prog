@@ -10,7 +10,7 @@
 namespace detail
 {
 	template<typename V1, typename V2, typename F>
-	void transform_vector1(V1& v1, V2& v2, F f)
+	void transform_vector1(V1 const& v1, V2& v2, F f)
 	{
 		std::transform(v1.cbegin(), v1.cend(), v2.begin(), f);
 	}
@@ -29,25 +29,47 @@ inline auto sub = [](auto const& x, auto const& y){ return x - y; };
 template<typename T>
 class matrix
 {
+	int dim;
+	std:: vector<T> data;
+
+	matrix()
+    {
+        dim = 0;
+        data;
+    }
+
+    matrix(int N)
+    {
+        dim = N;
+        data;
+        data.resize(N * N);
+    }
+
+	matrix(int N, std::vector<T> m): dim{N}, data{m}
+    {
+    }
+
+	matrix(matrix const& cpy): dim{cpy.dim}, data{cpy.data}
+    {
+    }
+
+    
+
 	public:
-   		int dim;
-		std:: vector<T> data;
-
-
-    	T&       operator()(int i, int j) { return data[i * dim + j]; }    //indexelés
+   		    	T&       operator()(int i, int j) { return data[i * dim + j]; }    //indexelés
 		T const& operator()(int i, int j) const{ return data[i * dim + j]; }
 
 
 
-		matrix<T>& operator += (matrix<T> & m)
+		matrix<T>& operator += (matrix<T> const& m)
     	{
-        	detail::transform_vector1((*this).data, m.data, add);
+        	detail::transform_vector2((*this).data, m.data, (*this).data, add);
        		return *this;
     	}
 
 		matrix<T>& operator -= (matrix<T> const& m)
     	{
-        	detail::transform_vector1((*this).data,  m.data, sub);
+        	detail::transform_vector2((*this).data,  m.data, (*this).data, sub);
         	return *this;
     	}
 	
