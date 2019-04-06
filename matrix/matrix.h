@@ -35,15 +35,14 @@ auto multiplication_matrix( int N,   std::vector<T> const& m1, std::vector<T> co
             h=0;
             for(int k=0; k < N; k++)
             {
-                h += m1.data[N * i + k] * m2.data[N * k + j];
+                h += m1[N * i + k] * m2[N * k + j];
             }  
 			hold[j] = h;          
         } 
 
 		for(int l=0; l < N; l++)  //átmeneti vektor elemeinek átadása
 		{
-			m3.data[N * i + l] = hold[l];
-			hold[l]=0;
+			m3[N * i + l] = hold[l];
 		}  
 
     } 
@@ -83,12 +82,11 @@ public:
     {
     }
 
-	matrix<T>& operator= (matrix const&) = default;
-
     
    	T&       operator()(int i, int j) { return data[i * dim + j]; }    //indexelés
 	T const& operator()(int i, int j) const{ return data[i * dim + j]; }
 
+		matrix<T>& operator= (matrix const&) =default;
 
 
 		matrix<T>& operator += (matrix<T> const& m)
@@ -111,18 +109,56 @@ public:
 
 		matrix<T>& operator *= (T const& a)
     	{
-        	detail::transform_vector1((*this).data, (*this).data, [](T const& x){ a*x ;});
+        	detail::transform_vector1((*this).data, (*this).data, [a](T const& x){return a*x ;});
         	return *this;
     	}
 
     	matrix<T>& operator /= (T const& a)
     	{
-        	detail::transform_vector1((*this).data, (*this).data, [](T const& x){ x/a ;});
+        	detail::transform_vector1((*this).data, (*this).data, [a](T const& x){return x/a ;});
         	return *this;
     	}
-
-		
-
-	
 };
+
+// nem beépített műveletek
+
+template<typename T>
+matrix<T> operator+(matrix<T> const& m1, matrix<T> const& m2)
+{
+    matrix<T> result(m1.dim);
+    detail::transform_matrix2(m1.data, m2.data, result.data, add);
+    return result;
+}
+
+template<typename T>
+matrix<T> operator-(matrix<T> const& m1, matrix<T> const& m2)
+{
+    matrix<T> result(m1.dim);
+    detail::transform_matrix2(m1.data, m2.data, result.data, sub);
+    return result;
+}
+
+template<typename T>
+matrix<T> operator*(matrix<T> const& m1, T const& a)
+{
+    matrix<T> result(m1.dim);
+    detail::transform_matrix1(m1.data, result.data, [a](T const& x){return a*x ;});
+    return result;
+}
+
+template<typename T>
+matrix<T> operator/(matrix<T> const& m1, T const& a)
+{
+    matrix<T> result(m1.dim);
+    detail::transform_matrix1(m1.data,  result.data, [a](T const& x){return x/a ;});
+    return result;
+}
+
+template<typename T>
+matrix<T> operator*(matrix<T> const& m1, matrix<T> const& m2)
+{
+    matrix<T> result(m1.dim);
+    multiplication_matrix(m1.dim, m1.data, m2.data, result.data);
+    return result;
+}
 
