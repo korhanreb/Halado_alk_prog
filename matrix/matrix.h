@@ -22,6 +22,34 @@ namespace detail
 	}
 }
 
+template <typename T>
+auto multiplication_matrix( int N,   std::vector<T> const& m1, std::vector<T> const& m2, std::vector<T> & m3)
+{
+    std::vector<T> hold;
+    hold.resize(N);
+	T h;
+    for(int i=0; i < N; i++)
+    {
+        for(int j=0; j < N; j++)  //szorzás elvégzése
+        {
+            h=0;
+            for(int k=0; k < N; k++)
+            {
+                h += m1.data[N * i + k] * m2.data[N * k + j];
+            }  
+			hold[j] = h;          
+        } 
+
+		for(int l=0; l < N; l++)  //átmeneti vektor elemeinek átadása
+		{
+			m3.data[N * i + l] = hold[l];
+			hold[l]=0;
+		}  
+
+    } 
+    return m3;
+} 
+
 //Common lambdas:
 inline auto add = [](auto const& x, auto const& y){ return x + y; };
 inline auto sub = [](auto const& x, auto const& y){ return x - y; };
@@ -31,6 +59,8 @@ class matrix
 {
 	int dim;
 	std:: vector<T> data;
+
+public:
 
 	matrix()
     {
@@ -53,11 +83,11 @@ class matrix
     {
     }
 
-    
+	matrix<T>& operator= (matrix const&) = default;
 
-	public:
-   		    	T&       operator()(int i, int j) { return data[i * dim + j]; }    //indexelés
-		T const& operator()(int i, int j) const{ return data[i * dim + j]; }
+    
+   	T&       operator()(int i, int j) { return data[i * dim + j]; }    //indexelés
+	T const& operator()(int i, int j) const{ return data[i * dim + j]; }
 
 
 
@@ -72,6 +102,27 @@ class matrix
         	detail::transform_vector2((*this).data,  m.data, (*this).data, sub);
         	return *this;
     	}
+
+		matrix<T>& operator *= (matrix<T> const& m)
+    	{
+        	multiplication_matrix((*this).dim, (*this).data, m.data , (*this).data);
+        	return *this;
+    	}
+
+		matrix<T>& operator *= (T const& a)
+    	{
+        	detail::transform_vector1((*this).data, (*this).data, [](T const& x){ a*x ;});
+        	return *this;
+    	}
+
+    	matrix<T>& operator /= (T const& a)
+    	{
+        	detail::transform_vector1((*this).data, (*this).data, [](T const& x){ x/a ;});
+        	return *this;
+    	}
+
+		
+
 	
 };
 
