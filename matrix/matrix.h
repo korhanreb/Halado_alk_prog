@@ -5,7 +5,6 @@
 #include <initializer_list>
 #include <cmath>
 #include <ostream>
-#include <iostream>
 
 namespace detail
 {
@@ -70,7 +69,6 @@ public:
     matrix(int N)
     {
         dim = N;
-        data;
         data.resize(N * N);
     }
 
@@ -92,8 +90,38 @@ public:
 	matrix<T>& operator=(matrix<T> const& cpy );
 	matrix<T>& operator=(matrix<T> && mv );
 
-   	T&       operator()(int i, int j) { return data[i * dim + j]; }    //indexelés
+	//Number of elements of the Vector:
+	int size()const
+	{
+		return static_cast<int>(data.size());
+	}
+
+	//begin and end for compatibility with STL:
+	auto begin()
+	{
+		return data.begin();
+	}
+
+	auto cbegin() const
+	{
+		return data.cbegin();
+	}
+
+	auto end()
+	{
+		return data.end();
+	}
+
+	auto cend() const
+	{
+		return data.cend();
+	}
+
+	//Indexelés:
+	T& operator()(int i, int j) { return data[i * dim + j]; }    
 	T const& operator()(int i, int j) const{ return data[i * dim + j]; }
+	T& operator[]( int i ) { return data[i]; }
+	T const& operator[]( int i ) const { return data[i]; }
 
 
 		matrix<T>& operator += (matrix<T> const& m)
@@ -126,16 +154,16 @@ public:
         	return *this;
     	}
 		//külső hozzáférés adása
-		template<typename T>
-		friend matrix<T> operator+(matrix<T> const& m1, matrix<T> const& m2);
-		template<typename T>
-		friend matrix<T> operator-(matrix<T> const& m1, matrix<T> const& m2);
-		template<typename T>
-		friend matrix<T> operator*(matrix<T> const& m1, T const& a);
-		template<typename T>
-		friend matrix<T> operator/(matrix<T> const& m1, T const& a);
-		template<typename T>
-		friend matrix<T> operator*(matrix<T> const& m1, matrix<T> const& m2);
+		template<typename T2>
+		friend matrix<T2> operator+(matrix<T2> const& m1, matrix<T2> const& m2);
+		template<typename T2>
+		friend matrix<T> operator-(matrix<T2> const& m1, matrix<T2> const& m2);
+		template<typename T2>
+		friend matrix<T2> operator*(matrix<T2> const& m1, T2 const& a);
+		template<typename T2>
+		friend matrix<T2> operator/(matrix<T2> const& m1, T2 const& a);
+		template<typename T2>
+		friend matrix<T2> operator*(matrix<T2> const& m1, matrix<T2> const& m2);
 
 };
 

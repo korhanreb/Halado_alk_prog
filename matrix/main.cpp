@@ -4,16 +4,16 @@
 template<typename T>
 void test(matrix<T> const& result, matrix<T> const& ref, std:: string text, double tol)
 {
-    if(result.dim != ref.dim)
+    if(result.size() != ref.size())
     {
-        std::cout << "Nem egyeznek a dimenziók: ", text, std::endl ;
+        std::cout << "Nem egyeznek a dimenziók: "<< text << std::endl ;
     
     }
-    for(int i=0; i < result.dim*result.dim ; i++)
+    for(int i=0; i < result.size()*result.size() ; i++)
     {
-        if(std:: abs(result.data(i)-ref.data(i))<tol)
+        if(std:: abs(result[i]-ref[i])>tol)
         {
-           std::cout << "Nem egyeznek a(z): ", text , i, ". elemben";            
+           std::cout << "Nem egyeznek a(z): "<< text << i << ". elemben";            
         }
     }
 }
@@ -30,7 +30,7 @@ int main(int,char**)
     matrix<double> B {2, {5.0, 6.0, 7.0, 8.0}};
 
     matrix<double> C=A+B;
-    matrix<double> ref {2, {12.0, 12.0, 23.0, 16.0}};
+    matrix<double> ref {2, {12.0, 22.0, 23.0, 16.0}};
     test(C,  ref, "const&-const&:összeadás", tol);
 
     
