@@ -82,11 +82,18 @@ public:
     {
     }
 
-    
+	matrix( matrix<T>&& mv )
+	{
+		std::swap(dim, mv.dim);
+		std::swap(data, mv.data);
+	}
+
+	//matrix<T>& operator= (matrix const&) =default;
+	matrix<T>& operator=(matrix<T> const& cpy );
+	matrix<T>& operator=(matrix<T> && mv );
+
    	T&       operator()(int i, int j) { return data[i * dim + j]; }    //indexelés
 	T const& operator()(int i, int j) const{ return data[i * dim + j]; }
-
-		matrix<T>& operator= (matrix const&) =default;
 
 
 		matrix<T>& operator += (matrix<T> const& m)
@@ -118,42 +125,81 @@ public:
         	detail::transform_vector1((*this).data, (*this).data, [a](T const& x){return x/a ;});
         	return *this;
     	}
+		//külső hozzáférés adása
+		template<typename T>
+		friend matrix<T> operator+(matrix<T> const& m1, matrix<T> const& m2);
+		template<typename T>
+		friend matrix<T> operator-(matrix<T> const& m1, matrix<T> const& m2);
+		template<typename T>
+		friend matrix<T> operator*(matrix<T> const& m1, T const& a);
+		template<typename T>
+		friend matrix<T> operator/(matrix<T> const& m1, T const& a);
+		template<typename T>
+		friend matrix<T> operator*(matrix<T> const& m1, matrix<T> const& m2);
+
 };
 
 // nem beépített műveletek
 
+
+//összeadás
 template<typename T>
 matrix<T> operator+(matrix<T> const& m1, matrix<T> const& m2)
 {
     matrix<T> result(m1.dim);
-    detail::transform_matrix2(m1.data, m2.data, result.data, add);
+    detail::transform_vector2(m1.data, m2.data, result.data, add);
     return result;
 }
 
+template<typename T>
+matrix<T> operator+(matrix<T> && m1, matrix<T> const& m2)
+{
+    detail::transform_vector2(m1.data, m2.data, m1.data, add);
+    return std::move(m1);
+}
+
+template<typename T>
+matrix<T> operator+(matrix<T> const& m1, matrix<T> && m2)
+{
+    detail::transform_vector2(m1.data, m2.data, m2.data, add);
+    return std::move(m2);
+}
+
+template<typename T>
+matrix<T> operator+(matrix<T> && m1, matrix<T> && m2)
+{
+    detail::transform_vector2(m1.data, m2.data, m1.data, add);
+    return std::move(m1);
+}
+
+//kivonás
 template<typename T>
 matrix<T> operator-(matrix<T> const& m1, matrix<T> const& m2)
 {
     matrix<T> result(m1.dim);
-    detail::transform_matrix2(m1.data, m2.data, result.data, sub);
+    detail::transform_vector2(m1.data, m2.data, result.data, sub);
     return result;
 }
 
+//skalárral szorzás
 template<typename T>
 matrix<T> operator*(matrix<T> const& m1, T const& a)
 {
     matrix<T> result(m1.dim);
-    detail::transform_matrix1(m1.data, result.data, [a](T const& x){return a*x ;});
+    detail::transform_vector1(m1.data, result.data, [a](T const& x){return a*x ;});
     return result;
 }
 
+//skalárral osztás
 template<typename T>
 matrix<T> operator/(matrix<T> const& m1, T const& a)
 {
     matrix<T> result(m1.dim);
-    detail::transform_matrix1(m1.data,  result.data, [a](T const& x){return x/a ;});
+    detail::transform_vector1(m1.data,  result.data, [a](T const& x){return x/a ;});
     return result;
 }
 
+//mátrix szorzás
 template<typename T>
 matrix<T> operator*(matrix<T> const& m1, matrix<T> const& m2)
 {
@@ -161,4 +207,6 @@ matrix<T> operator*(matrix<T> const& m1, matrix<T> const& m2)
     multiplication_matrix(m1.dim, m1.data, m2.data, result.data);
     return result;
 }
+
+
 
