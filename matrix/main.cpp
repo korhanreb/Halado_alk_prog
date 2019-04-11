@@ -52,9 +52,7 @@ int main(int,char**)
     matrix<double> ref {2, {12.1, 11.8, 23.0, 16.7}};
     test(A+=B,  ref, "A beépített összeadásnál összeadásnál a(z) ", tol); //itt az A megváltozott
     }
-
-
-
+    
     {
     matrix<double> ref {2, {0.6, -0.7, 0.2, 0.0}};
     test(C-D,  ref, "const&-const&: kivonásnál a(z) ", tol);

@@ -201,11 +201,27 @@ public:
 		template<typename T2>
 		friend matrix<T2> operator+(matrix<T2> const& m1, matrix<T2> const& m2);
 		template<typename T2>
+		friend matrix<T2> operator+(matrix<T2> const& m1, matrix<T2> && m2);
+		template<typename T2>
+		friend matrix<T2> operator+(matrix<T2> && m1, matrix<T2> const& m2);
+		template<typename T2>
+		friend matrix<T2> operator+(matrix<T2> && m1, matrix<T2> && m2);
+		template<typename T2>
 		friend matrix<T> operator-(matrix<T2> const& m1, matrix<T2> const& m2);
+		template<typename T2>
+		friend matrix<T> operator-(matrix<T2> && m1, matrix<T2> const& m2);
+		template<typename T2>
+		friend matrix<T> operator-(matrix<T2> const& m1, matrix<T2> && m2);
+		template<typename T2>
+		friend matrix<T> operator-(matrix<T2> && m1, matrix<T2> && m2);
 		template<typename T2>
 		friend matrix<T2> operator*(matrix<T2> const& m1, T2 const& a);
 		template<typename T2>
+		friend matrix<T2> operator*(matrix<T2> && m1, T2 const& a);
+		template<typename T2>
 		friend matrix<T2> operator/(matrix<T2> const& m1, T2 const& a);
+		template<typename T2>
+		friend matrix<T2> operator/(matrix<T2> && m1, T2 const& a);
 		template<typename T2>
 		friend matrix<T2> operator*(matrix<T2> const& m1, matrix<T2> const& m2);
 
@@ -252,6 +268,7 @@ matrix<T> operator-(matrix<T> const& m1, matrix<T> const& m2)
     detail::transform_vector2(m1.data, m2.data, result.data, sub);
     return result;
 }
+
 template<typename T>
 matrix<T> operator-(matrix<T> && m1, matrix<T> const& m2)
 {
@@ -272,6 +289,7 @@ matrix<T> operator-(matrix<T> && m1, matrix<T> && m2)
     detail::transform_vector2(m1.data, m2.data, m1.data, sub);
     return std::move(m1);
 }
+
 
 //skalárral szorzás
 template<typename T>
