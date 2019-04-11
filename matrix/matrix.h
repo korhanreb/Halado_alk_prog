@@ -22,7 +22,53 @@ namespace detail
 }
 
 template <typename T>
-auto multiplication_matrix( int N,   std::vector<T> const& m1, std::vector<T> const& m2, std::vector<T> & m3)
+auto multiplication_matrix0( int N,   std::vector<T> const& m1, std::vector<T> const& m2)
+{
+    std::vector<T> m3;
+    m3.resize(N*N);
+	T h;
+    for(int i=0; i < N; i++)
+    {
+        for(int j=0; j < N; j++)  //szorzás elvégzése
+        {
+            h=0;
+            for(int k=0; k < N; k++)
+            {
+                h += m1[N * i + k] * m2[N * k + j];
+            }  
+			m3[N*i+j] = h;          
+        } 
+    } 
+    return m3;
+} 
+
+template <typename T>
+auto multiplication_matrix1( int N,   std::vector<T> && m1, std::vector<T> const& m2)
+{
+    std::vector<T> hold;
+    hold.resize(N);
+	T h;
+    for(int i=0; i < N; i++)
+    {
+        for(int j=0; j < N; j++)  //szorzás elvégzése
+        {
+            h=0;
+            for(int k=0; k < N; k++)
+            {
+                h += m2[N * i + k] * m1[N * k + j];
+            }  
+			hold[j] = h;          
+        } 
+
+		for(int l=0; l < N; l++)  //átmeneti vektor elemeinek átadása
+		{
+			m1[N * i + l] = hold[l];
+		}  
+    } 
+} 
+
+template <typename T>
+auto multiplication_matrix2( int N,   std::vector<T> const& m1, std::vector<T> && m2)
 {
     std::vector<T> hold;
     hold.resize(N);
@@ -41,11 +87,9 @@ auto multiplication_matrix( int N,   std::vector<T> const& m1, std::vector<T> co
 
 		for(int l=0; l < N; l++)  //átmeneti vektor elemeinek átadása
 		{
-			m3[N * i + l] = hold[l];
+			m2[N * i + l] = hold[l];
 		}  
-
     } 
-    return m3;
 } 
 
 //Common lambdas:
@@ -118,7 +162,7 @@ public:
 	}
 
 	//Indexelés:
-	T& operator()(int i, int j) { return data[i * dim + j]; }    
+	T& operator()(int i, int j) { return data[i * dim + j]; }
 	T const& operator()(int i, int j) const{ return data[i * dim + j]; }
 	T& operator[]( int i ) { return data[i]; }
 	T const& operator[]( int i ) const { return data[i]; }
@@ -208,6 +252,26 @@ matrix<T> operator-(matrix<T> const& m1, matrix<T> const& m2)
     detail::transform_vector2(m1.data, m2.data, result.data, sub);
     return result;
 }
+template<typename T>
+matrix<T> operator-(matrix<T> && m1, matrix<T> const& m2)
+{
+    detail::transform_vector2(m1.data, m2.data, m1.data, sub);
+    return std::move(m1);
+}
+
+template<typename T>
+matrix<T> operator-(matrix<T> const& m1, matrix<T> && m2)
+{
+    detail::transform_vector2(m1.data, m2.data, m2.data, sub);
+    return std::move(m2);
+}
+
+template<typename T>
+matrix<T> operator-(matrix<T> && m1, matrix<T> && m2)
+{
+    detail::transform_vector2(m1.data, m2.data, m1.data, sub);
+    return std::move(m1);
+}
 
 //skalárral szorzás
 template<typename T>
@@ -216,6 +280,13 @@ matrix<T> operator*(matrix<T> const& m1, T const& a)
     matrix<T> result(m1.dim);
     detail::transform_vector1(m1.data, result.data, [a](T const& x){return a*x ;});
     return result;
+}
+
+template<typename T>
+matrix<T> operator*(matrix<T> && m1, T const& a)
+{
+    detail::transform_vector1(m1.data, [a](T const& x){return a*x ;});
+    return std::move(m1);
 }
 
 //skalárral osztás
@@ -227,13 +298,32 @@ matrix<T> operator/(matrix<T> const& m1, T const& a)
     return result;
 }
 
+template<typename T>
+matrix<T> operator/(matrix<T> && m1, T const& a)
+{
+    detail::transform_vector1(m1.data, [a](T const& x){return a/x ;});
+    return std::move(m1);
+}
+
 //mátrix szorzás
 template<typename T>
 matrix<T> operator*(matrix<T> const& m1, matrix<T> const& m2)
 {
-    matrix<T> result(m1.dim);
-    multiplication_matrix(m1.dim, m1.data, m2.data, result.data);
-    return result;
+    return multiplication_matrix0(m1.dim, m1.data, m2.data);
+}
+
+template<typename T>
+matrix<T> operator*(matrix<T> && m1, matrix<T> const& m2)
+{
+    multiplication_matrix1(m1.dim, m1.data, m2.data);
+	return std::move(m1);    
+}
+
+template<typename T>
+matrix<T> operator*(matrix<T> const& m1, matrix<T> && m2)
+{
+    multiplication_matrix2(m1.dim, m1.data, m2.data);
+	return std::move(m2);    
 }
 
 

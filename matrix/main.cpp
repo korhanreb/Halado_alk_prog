@@ -9,11 +9,11 @@ void test(matrix<T> const& result, matrix<T> const& ref, std:: string text, doub
         std::cout << "Nem egyeznek a dimenziók: "<< text << std::endl ;
     
     }
-    for(int i=0; i < result.size()*result.size() ; i++)
+    for(int i=0; i < result.size() ; i++)
     {
         if(std:: abs(result[i]-ref[i])>tol)
         {
-           std::cout << "Nem egyeznek a(z): "<< text << i << ". elemben";            
+           std::cout << "Nem egyeznek a(z): "<< text << i << ". elemek" << std::endl;            
         }
     }
 }
@@ -26,17 +26,55 @@ int main(int,char**)
     double tol = 1e-10;
 
     double a=4;
-    matrix<double> A {2, {7.0, 5.0, 16.0, 8.0}};
-    matrix<double> B {2, {5.0, 6.0, 7.0, 8.0}};
+    matrix<double> A {2, {7.1, 5.5, 16.0, 8.2}};
+    matrix<double> B {2, {5.0, 6.3, 7.0, 8.5}};
+    matrix<double> const C {2, {4.4, 6.0, 7.2, 8.0}};
+    matrix<double> const D {2, {5.0, 6.7, 7.0, 8.2}};
 
-    matrix<double> C=A+B;
-    matrix<double> ref {2, {12.0, 22.0, 23.0, 16.0}};
-    test(C,  ref, "const&-const&:összeadás", tol);
+    //teszt: összeadás
+    {
+    matrix<double> ref {2, {9.4, 12.7, 14.2, 16.2}};
+    test(C+D,  ref, "const&-const&: összeadásnál a(z) ", tol);
+    }
+    {
+    matrix<double> ref {2, {11.5, 11.5, 23.2, 16.2}};
+    test(C+A,  ref, "const&-&&: összeadásnál a(z) ", tol);
+    }
+    {
+    matrix<double> ref {2, {10.0, 13.0, 14.0, 16.7}};
+    test(B+D,  ref, "&&-const&: összeadásnál a(z) ", tol);
+    }
+    {
+    matrix<double> ref {2, {12.1, 11.8, 23.0, 16.7}};
+    test(A+B,  ref, "&&-&&: összeadásnál a(z) ", tol);
+    }
+    {
+    matrix<double> ref {2, {12.1, 11.8, 23.0, 16.7}};
+    test(A+=B,  ref, "A beépített összeadásnál összeadásnál a(z) ", tol); //itt az A megváltozott
+    }
 
-    
-    
 
-    std::cout << C (0,0) << std::endl;
+
+    {
+    matrix<double> ref {2, {0.6, -0.7, 0.2, 0.0}};
+    test(C-D,  ref, "const&-const&: kivonásnál a(z) ", tol);
+    }
+    {
+    matrix<double> ref {2, {11.5, 11.5, 23.2, 16.2}};
+    test(C-A,  ref, "const&-&&: kivonásnál a(z) ", tol);
+    }
+    {
+    matrix<double> ref {2, {10.0, 13.0, 14.0, 16.7}};
+    test(B-D,  ref, "&&-const&: kivonásnál a(z) ", tol);
+    }
+    {
+    matrix<double> ref {2, {12.1, 11.8, 23.0, 16.7}};
+    test(A-B,  ref, "&&-&&: kivonásnál a(z) ", tol);
+    }
+    {
+    matrix<double> ref {2, {12.1, 11.8, 23.0, 16.7}};
+    test(A-=B,  ref, "A beépített kivonásnál összeadásnál a(z) ", tol);
+    }
 
     return 0;
 }
