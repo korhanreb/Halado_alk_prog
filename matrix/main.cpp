@@ -4,9 +4,14 @@
 template<typename T>
 void test(matrix<T> const& result, matrix<T> const& ref, std:: string text, double tol)
 {
-    if(result.size() != ref.size())
+    if(result.Dim() != ref.Dim())
     {
         std::cout << "Nem egyeznek a dimenziók: "<< text << std::endl ;
+    
+    }
+    if(result.size() != ref.size())
+    {
+        std::cout << "Nem egyeznek meg az elemszámok: "<< text << std::endl ;
     
     }
     for(int i=0; i < result.size() ; i++)
@@ -125,10 +130,10 @@ int main(int,char**)
     test(A*C,  ref, "A &&-const&: vektorral szorzásnál a(z) ", tol);  
     }
 
-    //{
-    // matrix<double> ref {2, {64, 78.68, 92, 113.84}};
-    //test(C*D,  ref, "A const&-const&: vektorral szorzásnál a(z) ", tol);  
-    //}
+    {
+     matrix<double> ref {2, {64, 78.68, 92, 113.84}};
+    test(C*D,  ref, "A const&-const&: vektorral szorzásnál a(z) ", tol);  
+    }
 
     
 

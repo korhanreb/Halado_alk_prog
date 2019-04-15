@@ -63,6 +63,7 @@ public:
 	}
 
 	matrix<T>& operator=(matrix<T> const&) =default;
+	
 
 
 	//matrix<T>& operator=(matrix<T> const& cpy );
@@ -73,6 +74,12 @@ public:
 	{
 		return static_cast<int>(data.size());
 	}
+
+	int Dim()const
+	{
+		return static_cast<int>(dim);
+	}
+
 
 	
 
@@ -341,7 +348,7 @@ matrix<T> operator/(matrix<T> && m1, T const& a)
 template<typename T>
 matrix<T> operator*(matrix<T> const& m1, matrix<T> const& m2)
 {
-    return multiplication_matrix0(m1.dim, m1, m2);
+   return multiplication_matrix0(m1.dim, m1, m2);
 }
 
 template<typename T>
