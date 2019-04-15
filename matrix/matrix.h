@@ -21,76 +21,8 @@ namespace detail
 	}
 }
 
-template <typename T>
-auto multiplication_matrix0( int N,   std::vector<T> const& m1, std::vector<T> const& m2)
-{
-    std::vector<T> m3;
-    m3.resize(N*N);
-	T h;
-    for(int i=0; i < N; i++)
-    {
-        for(int j=0; j < N; j++)  //szorzás elvégzése
-        {
-            h=0;
-            for(int k=0; k < N; k++)
-            {
-                h += m1[N * i + k] * m2[N * k + j];
-            }  
-			m3[N*i+j] = h;          
-        } 
-    } 
-    return m3;
-} 
 
-template <typename T>
-auto multiplication_matrix1( int N,   std::vector<T> && m1, std::vector<T> const& m2)
-{
-    std::vector<T> hold;
-    hold.resize(N);
-	T h;
-    for(int i=0; i < N; i++)
-    {
-        for(int j=0; j < N; j++)  //szorzás elvégzése
-        {
-            h=0;
-            for(int k=0; k < N; k++)
-            {
-                h += m2[N * i + k] * m1[N * k + j];
-            }  
-			hold[j] = h;          
-        } 
 
-		for(int l=0; l < N; l++)  //átmeneti vektor elemeinek átadása
-		{
-			m1[N * i + l] = hold[l];
-		}  
-    } 
-} 
-
-template <typename T>
-auto multiplication_matrix2( int N,   std::vector<T> const& m1, std::vector<T> && m2)
-{
-    std::vector<T> hold;
-    hold.resize(N);
-	T h;
-    for(int i=0; i < N; i++)
-    {
-        for(int j=0; j < N; j++)  //szorzás elvégzése
-        {
-            h=0;
-            for(int k=0; k < N; k++)
-            {
-                h += m1[N * i + k] * m2[N * k + j];
-            }  
-			hold[j] = h;          
-        } 
-
-		for(int l=0; l < N; l++)  //átmeneti vektor elemeinek átadása
-		{
-			m2[N * i + l] = hold[l];
-		}  
-    } 
-} 
 
 //Common lambdas:
 inline auto add = [](auto const& x, auto const& y){ return x + y; };
@@ -130,15 +62,19 @@ public:
 		std::swap(data, mv.data);
 	}
 
-	//matrix<T>& operator= (matrix const&) =default;
-	matrix<T>& operator=(matrix<T> const& cpy );
-	matrix<T>& operator=(matrix<T> && mv );
+	matrix<T>& operator=(matrix<T> const&) =default;
+
+
+	//matrix<T>& operator=(matrix<T> const& cpy );
+	//matrix<T>& operator=(matrix<T> && mv );
 
 	//Number of elements of the Vector:
 	int size()const
 	{
 		return static_cast<int>(data.size());
 	}
+
+	
 
 	//begin and end for compatibility with STL:
 	auto begin()
@@ -207,13 +143,13 @@ public:
 		template<typename T2>
 		friend matrix<T2> operator+(matrix<T2> && m1, matrix<T2> && m2);
 		template<typename T2>
-		friend matrix<T> operator-(matrix<T2> const& m1, matrix<T2> const& m2);
+		friend matrix<T2> operator-(matrix<T2> const& m1, matrix<T2> const& m2);
 		template<typename T2>
-		friend matrix<T> operator-(matrix<T2> && m1, matrix<T2> const& m2);
+		friend matrix<T2> operator-(matrix<T2> && m1, matrix<T2> const& m2);
 		template<typename T2>
-		friend matrix<T> operator-(matrix<T2> const& m1, matrix<T2> && m2);
+		friend matrix<T2> operator-(matrix<T2> const& m1, matrix<T2> && m2);
 		template<typename T2>
-		friend matrix<T> operator-(matrix<T2> && m1, matrix<T2> && m2);
+		friend matrix<T2> operator-(matrix<T2> && m1, matrix<T2> && m2);
 		template<typename T2>
 		friend matrix<T2> operator*(matrix<T2> const& m1, T2 const& a);
 		template<typename T2>
@@ -224,8 +160,86 @@ public:
 		friend matrix<T2> operator/(matrix<T2> && m1, T2 const& a);
 		template<typename T2>
 		friend matrix<T2> operator*(matrix<T2> const& m1, matrix<T2> const& m2);
+		template<typename T2>
+		friend matrix<T2> operator*(matrix<T2> const& m1, matrix<T2> && m2);
+		template<typename T2>
+		friend matrix<T2> operator*(matrix<T2> && m1, matrix<T2> const& m2);
 
 };
+
+template <typename T>
+auto multiplication_matrix0( int N,   matrix<T> const& m1, matrix<T> const& m2)
+{
+    matrix<T> m3(N);
+	T h;
+    for(int i=0; i < N; i++)
+    {
+        for(int j=0; j < N; j++)  //szorzás elvégzése
+        {
+            h=0;
+            for(int k=0; k < N; k++)
+            {
+                h += m1(i,k) * m2(k,j);
+            }  
+			m3(i,j) = h;          
+        } 
+    } 
+    return m3;
+}
+
+template <typename T>
+auto multiplication_matrix1( int N,   matrix<T> && m1, matrix<T> const& m2)
+{
+    std::vector<T> hold;
+    hold.resize(N);
+	T h;
+    for(int i=0; i < N; i++)
+    {
+        for(int j=0; j < N; j++)  //szorzás elvégzése
+        {
+            h=0;
+            for(int k=0; k < N; k++)
+            {
+                h += m2(i,k) * m1(k,j);
+            }  
+			hold[j] = h;          
+        } 
+
+		for(int l=0; l < N; l++)  //átmeneti vektor elemeinek átadása
+		{
+			m1(i, l) = hold[l];
+		}  
+    } 
+} 
+
+template <typename T>
+auto multiplication_matrix2( int N,   matrix<T> const& m1, matrix<T> && m2)
+{
+    std::vector<T> hold;
+    hold.resize(N);
+	T h;
+    for(int i=0; i < N; i++)
+    {
+        for(int j=0; j < N; j++)  //szorzás elvégzése
+        {
+            h=0;
+            for(int k=0; k < N; k++)
+            {
+                h += m1(i, k) * m2(k, j);
+            }  
+			hold[j] = h;          
+        } 
+
+		for(int l=0; l < N; l++)  //átmeneti vektor elemeinek átadása
+		{
+			m2(i, l) = hold[l];
+		}  
+    } 
+} 
+
+
+
+
 
 // nem beépített műveletek
 
@@ -327,20 +341,20 @@ matrix<T> operator/(matrix<T> && m1, T const& a)
 template<typename T>
 matrix<T> operator*(matrix<T> const& m1, matrix<T> const& m2)
 {
-    return multiplication_matrix0(m1.dim, m1.data, m2.data);
+    return multiplication_matrix0(m1.dim, m1, m2);
 }
 
 template<typename T>
 matrix<T> operator*(matrix<T> && m1, matrix<T> const& m2)
 {
-    multiplication_matrix1(m1.dim, m1.data, m2.data);
+    multiplication_matrix1(m1.dim, m1, m2);
 	return std::move(m1);    
 }
 
 template<typename T>
 matrix<T> operator*(matrix<T> const& m1, matrix<T> && m2)
 {
-    multiplication_matrix2(m1.dim, m1.data, m2.data);
+    multiplication_matrix2(m1.dim, m1, m2);
 	return std::move(m2);    
 }
 
