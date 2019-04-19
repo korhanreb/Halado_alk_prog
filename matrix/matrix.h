@@ -324,7 +324,7 @@ matrix<T> operator*(matrix<T> const& m1, T const& a)
 template<typename T>
 matrix<T> operator*(matrix<T> && m1, T const& a)
 {
-    detail::transform_vector1(m1.data, [a](T const& x){return a*x ;});
+    detail::transform_vector1(m1.data,  m1.data, [a](T const& x){return a*x ;});
     return std::move(m1);
 }
 
@@ -340,7 +340,7 @@ matrix<T> operator/(matrix<T> const& m1, T const& a)
 template<typename T>
 matrix<T> operator/(matrix<T> && m1, T const& a)
 {
-    detail::transform_vector1(m1.data, [a](T const& x){return a/x ;});
+    detail::transform_vector1(m1.data, m1.data, [a](T const& x){return x/a ;});
     return std::move(m1);
 }
 
