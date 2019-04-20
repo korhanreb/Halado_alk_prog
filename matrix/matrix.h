@@ -144,33 +144,33 @@ public:
 		template<typename T2>
 		friend matrix<T2> operator+(matrix<T2> const& m1, matrix<T2> const& m2);
 		template<typename T2>
-		friend matrix<T2> operator+(matrix<T2> const& m1, matrix<T2> && m2);
+		friend matrix<T2>&& operator+(matrix<T2> const& m1, matrix<T2> && m2);
 		template<typename T2>
-		friend matrix<T2> operator+(matrix<T2> && m1, matrix<T2> const& m2);
+		friend matrix<T2>&& operator+(matrix<T2> && m1, matrix<T2> const& m2);
 		template<typename T2>
-		friend matrix<T2> operator+(matrix<T2> && m1, matrix<T2> && m2);
+		friend matrix<T2>&& operator+(matrix<T2> && m1, matrix<T2> && m2);
 		template<typename T2>
 		friend matrix<T2> operator-(matrix<T2> const& m1, matrix<T2> const& m2);
 		template<typename T2>
-		friend matrix<T2> operator-(matrix<T2> && m1, matrix<T2> const& m2);
+		friend matrix<T2>&& operator-(matrix<T2> && m1, matrix<T2> const& m2);
 		template<typename T2>
-		friend matrix<T2> operator-(matrix<T2> const& m1, matrix<T2> && m2);
+		friend matrix<T2>&& operator-(matrix<T2> const& m1, matrix<T2> && m2);
 		template<typename T2>
-		friend matrix<T2> operator-(matrix<T2> && m1, matrix<T2> && m2);
+		friend matrix<T2>&& operator-(matrix<T2> && m1, matrix<T2> && m2);
 		template<typename T2>
 		friend matrix<T2> operator*(matrix<T2> const& m1, T2 const& a);
 		template<typename T2>
-		friend matrix<T2> operator*(matrix<T2> && m1, T2 const& a);
+		friend matrix<T2>&& operator*(matrix<T2> && m1, T2 const& a);
 		template<typename T2>
 		friend matrix<T2> operator/(matrix<T2> const& m1, T2 const& a);
 		template<typename T2>
-		friend matrix<T2> operator/(matrix<T2> && m1, T2 const& a);
+		friend matrix<T2>&& operator/(matrix<T2> && m1, T2 const& a);
 		template<typename T2>
 		friend matrix<T2> operator*(matrix<T2> const& m1, matrix<T2> const& m2);
 		template<typename T2>
-		friend matrix<T2> operator*(matrix<T2> const& m1, matrix<T2> && m2);
+		friend matrix<T2>&& operator*(matrix<T2> const& m1, matrix<T2> && m2);
 		template<typename T2>
-		friend matrix<T2> operator*(matrix<T2> && m1, matrix<T2> const& m2);
+		friend matrix<T2>&& operator*(matrix<T2> && m1, matrix<T2> const& m2);
 
 };
 
@@ -195,7 +195,7 @@ auto multiplication_matrix0( int N,   matrix<T> const& m1, matrix<T> const& m2)
 }
 
 template <typename T>
-auto multiplication_matrix1( int N,   matrix<T> && m1, matrix<T> const& m2)
+auto multiplication_matrix1( int N,   matrix<T> & m1, matrix<T> const& m2)
 {
     std::vector<T> hold;
     hold.resize(N);
@@ -207,7 +207,7 @@ auto multiplication_matrix1( int N,   matrix<T> && m1, matrix<T> const& m2)
             h=0;
             for(int k=0; k < N; k++)
             {
-                h += m2(i,k) * m1(k,j);
+                h += m1(i,k) * m2(k,j);
             }  
 			hold[j] = h;          
         } 
@@ -220,7 +220,7 @@ auto multiplication_matrix1( int N,   matrix<T> && m1, matrix<T> const& m2)
 } 
 
 template <typename T>
-auto multiplication_matrix2( int N,   matrix<T> const& m1, matrix<T> && m2)
+auto multiplication_matrix2( int N,   matrix<T> const& m1, matrix<T> & m2)
 {
     std::vector<T> hold;
     hold.resize(N);
@@ -232,14 +232,14 @@ auto multiplication_matrix2( int N,   matrix<T> const& m1, matrix<T> && m2)
             h=0;
             for(int k=0; k < N; k++)
             {
-                h += m1(i, k) * m2(k, j);
+                h += m1(j, k) * m2(k, i);
             }  
 			hold[j] = h;          
         } 
 
 		for(int l=0; l < N; l++)  //átmeneti vektor elemeinek átadása
 		{
-			m2(i, l) = hold[l];
+			m2(l, i) = hold[l];
 		}  
     } 
 } 
@@ -261,21 +261,21 @@ matrix<T> operator+(matrix<T> const& m1, matrix<T> const& m2)
 }
 
 template<typename T>
-matrix<T> operator+(matrix<T> && m1, matrix<T> const& m2)
+matrix<T>&& operator+(matrix<T> && m1, matrix<T> const& m2)
 {
     detail::transform_vector2(m1.data, m2.data, m1.data, add);
     return std::move(m1);
 }
 
 template<typename T>
-matrix<T> operator+(matrix<T> const& m1, matrix<T> && m2)
+matrix<T>&& operator+(matrix<T> const& m1, matrix<T> && m2)
 {
     detail::transform_vector2(m1.data, m2.data, m2.data, add);
     return std::move(m2);
 }
 
 template<typename T>
-matrix<T> operator+(matrix<T> && m1, matrix<T> && m2)
+matrix<T>&& operator+(matrix<T> && m1, matrix<T> && m2)
 {
     detail::transform_vector2(m1.data, m2.data, m1.data, add);
     return std::move(m1);
@@ -291,21 +291,21 @@ matrix<T> operator-(matrix<T> const& m1, matrix<T> const& m2)
 }
 
 template<typename T>
-matrix<T> operator-(matrix<T> && m1, matrix<T> const& m2)
+matrix<T>&& operator-(matrix<T> && m1, matrix<T> const& m2)
 {
     detail::transform_vector2(m1.data, m2.data, m1.data, sub);
     return std::move(m1);
 }
 
 template<typename T>
-matrix<T> operator-(matrix<T> const& m1, matrix<T> && m2)
+matrix<T>&& operator-(matrix<T> const& m1, matrix<T> && m2)
 {
     detail::transform_vector2(m1.data, m2.data, m2.data, sub);
     return std::move(m2);
 }
 
 template<typename T>
-matrix<T> operator-(matrix<T> && m1, matrix<T> && m2)
+matrix<T>&& operator-(matrix<T> && m1, matrix<T> && m2)
 {
     detail::transform_vector2(m1.data, m2.data, m1.data, sub);
     return std::move(m1);
@@ -322,7 +322,7 @@ matrix<T> operator*(matrix<T> const& m1, T const& a)
 }
 
 template<typename T>
-matrix<T> operator*(matrix<T> && m1, T const& a)
+matrix<T>&& operator*(matrix<T> && m1, T const& a)
 {
     detail::transform_vector1(m1.data,  m1.data, [a](T const& x){return a*x ;});
     return std::move(m1);
@@ -338,7 +338,7 @@ matrix<T> operator/(matrix<T> const& m1, T const& a)
 }
 
 template<typename T>
-matrix<T> operator/(matrix<T> && m1, T const& a)
+matrix<T>&& operator/(matrix<T> && m1, T const& a)
 {
     detail::transform_vector1(m1.data, m1.data, [a](T const& x){return x/a ;});
     return std::move(m1);
@@ -352,14 +352,14 @@ matrix<T> operator*(matrix<T> const& m1, matrix<T> const& m2)
 }
 
 template<typename T>
-matrix<T> operator*(matrix<T> && m1, matrix<T> const& m2)
+matrix<T>&& operator*(matrix<T> && m1, matrix<T> const& m2)
 {
     multiplication_matrix1(m1.dim, m1, m2);
 	return std::move(m1);    
 }
 
 template<typename T>
-matrix<T> operator*(matrix<T> const& m1, matrix<T> && m2)
+matrix<T>&& operator*(matrix<T> const& m1, matrix<T> && m2)
 {
     multiplication_matrix2(m1.dim, m1, m2);
 	return std::move(m2);    

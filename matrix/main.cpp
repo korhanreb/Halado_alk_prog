@@ -137,6 +137,7 @@ int main(int,char**)
     matrix<double> ref {2, {74, 91.48, 137.4, 170.5}};
     test(A*B,  ref, "A &&-&&: vektorral szorzásnál a(z) ", tol);  
     }
+    
 
     //"move-oló" tesztek
 
@@ -203,15 +204,5 @@ int main(int,char**)
     test(std::move(A12)*B,  ref, "A &&-&&: MOVE vektorral szorzásnál a(z) ", tol);  
     }  
    
-
-
-
-    
-
-
-
-    
-
-
     return 0;
 }
