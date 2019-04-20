@@ -42,7 +42,7 @@ for (int j=0; j<100; ++j)  //dim megadása
     
     long long n1 = std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count();
     long long n2 = std::chrono::duration_cast<std::chrono::nanoseconds>(t4-t3).count();
-    ;
+    
 
     
     myfile << j << ", " << n1 << ", " << n2  << ", \n";
