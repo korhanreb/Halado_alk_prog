@@ -6,35 +6,29 @@
 #include <fstream>
 #include <algorithm>
 
-double f()
-    { 
-        std::random_device rd{};
-        std::mt19937 gen(rd());
-        std::normal_distribution<double> distr(100, 20);  //átlag, szórás
-        return distr(gen);
-    }
 
 
 int main(int, char**) {
+
+std::random_device rd{};
+std::mt19937 gen(rd());
+std::normal_distribution<double> distr(100, 20);  //átlag, szórás
 
 
 std::ofstream myfile("data.txt");
 
 
-for (int j=0; j<100; ++j)  //dim megadása
+for (int j=1; j<100; ++j)  //dim megadása
 {
     matrix<double> A(j);
     matrix<double> B(j);   
 
     
-    std::generate(A.begin(), A.end(), f);
-    std::generate(B.begin(), B.end(), f);
+    std::generate(A.begin(), A.end(), [&](){ return distr(gen) ;});
+    std::generate(B.begin(), B.end(), [&](){ return distr(gen) ;});
 
 
-    //std:: cout << A[0] << std:: endl;
-    //std:: cout << B(0,0) << std:: endl;
-
-    int N{5};  //hányszor végezzük el az időmérést
+    int N{100};  //hányszor végezzük el az időmérést
     std::vector<long long> T1(N);
     std::vector<long long> T2(N);
 
