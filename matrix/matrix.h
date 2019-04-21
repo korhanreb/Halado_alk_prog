@@ -48,7 +48,7 @@ public:
         data.resize(N * N);
     }
 
-	matrix(int N, std::vector<T> m): dim{N}, data{m}
+	matrix(int N, std::vector<T>const& m): dim{N}, data{m}
     {
     }
 
@@ -60,6 +60,8 @@ public:
 	{
 		std::swap(dim, mv.dim);
 		std::swap(data, mv.data);
+		mv.dim=0;
+		mv.data={};
 	}
 
 	matrix<T>& operator=(matrix<T> const&) =default;
@@ -197,8 +199,7 @@ auto multiplication_matrix0( int N,   matrix<T> const& m1, matrix<T> const& m2)
 template <typename T>
 auto multiplication_matrix1( int N,   matrix<T> & m1, matrix<T> const& m2)
 {
-    std::vector<T> hold;
-    hold.resize(N);
+    std::vector<T> hold(N);
 	T h;
     for(int i=0; i < N; i++)
     {
@@ -363,6 +364,13 @@ matrix<T>&& operator*(matrix<T> const& m1, matrix<T> && m2)
 {
     multiplication_matrix2(m1.dim, m1, m2);
 	return std::move(m2);    
+}
+
+template<typename T>
+matrix<T>&& operator*(matrix<T> && m1, matrix<T> && m2)
+{
+    multiplication_matrix1(m1.dim, m1, m2);
+	return std::move(m1);    
 }
 
 

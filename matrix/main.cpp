@@ -23,6 +23,13 @@ void test(matrix<T> const& result, matrix<T> const& ref, std:: string text, doub
     }
 }
 
+template<typename T>
+void test2(matrix<T> const& m, std:: string text)
+{
+    if(m.size() != 0){ std::cout << " A MOVE-olás után nem üres a következő mátrix: " << text <<  std::endl ;};
+    if(m.Dim() != 0){ std::cout << " A MOVE-olás után nem 0 következő mátrix dimenziója: " << text <<  std::endl ;};
+}
+
 
 int main(int,char**)
  {
@@ -157,51 +164,75 @@ int main(int,char**)
     //összeadás
     {
     matrix<double> ref {2, {11.5, 11.5, 23.2, 16.2}};
-    test(C+std::move(A5),  ref, "const&-&&: MOVE összeadásnál a(z) ", tol);
+    matrix<double> RES= C+std::move(A5);
+    test2(A5, "const&-&&: MOVE összeadásnál");
+    test(RES,  ref, "const&-&&: MOVE összeadásnál a(z) ", tol);    
     }
+    //std::cout << A5.Dim() <<  std::endl;
+    //std::cout << A5.size() <<  std::endl;
     {
     matrix<double> ref {2, {10.0, 13.0, 14.0, 16.7}};
-    test(std::move(B2)+D,  ref, "&&-const&: MOVE összeadásnál a(z) ", tol);
+    matrix<double> RES= std::move(B2)+D;
+    test2(B2, "&&-const&: MOVE összeadásnál");
+    test(RES,  ref, "&&-const&: MOVE összeadásnál a(z) ", tol);
     }
     {
     matrix<double> ref {2, {12.1, 11.8, 23.0, 16.7}};
-    test(std::move(A6)+B,  ref, "&&-&&: MOVE összeadásnál a(z) ", tol);
+    matrix<double> RES= std::move(A6)+B;
+    test2(A6, "&&-&&: MOVE összeadásnál");
+    test(RES,  ref, "&&-&&: MOVE összeadásnál a(z) ", tol);
     }
     //kivonás
     {
     matrix<double> ref {2, {-2.7, 0.5, -8.8, -0.2}};
-    test(C-std::move(A7),  ref, "const&-&&: MOVE kivonásnál a(z) ", tol);
+    matrix<double> RES= C-std::move(A7);
+    test2(A7, "const&-&&: MOVE kivonásnál");
+    test(RES,  ref, "const&-&&: MOVE kivonásnál a(z) ", tol);
     }
     {
     matrix<double> ref {2, {0, -0.4, 0, 0.3}};
-    test(std::move(B3)-D,  ref, "&&-const&: MOVE kivonásnál a(z) ", tol);
+    matrix<double> RES= std::move(B3)-D;
+    test2(B3, "&&-const&: MOVE kivonásnál");
+    test(RES,  ref, "&&-const&: MOVE kivonásnál a(z) ", tol);
     }
     {
     matrix<double> ref {2, {2.1, -0.8, 9, -0.3}};
-    test(std::move(A8)-B,  ref, "&&-&&: MOVE kivonásnál a(z) ", tol);
+    matrix<double> RES= std::move(A8)-B;
+    test2(A8, "&&-&&: MOVE kivonásnál");
+    test(RES,  ref, "&&-&&: MOVE kivonásnál a(z) ", tol);
     }
     //skalárral szorzás
     {
     matrix<double> ref {2, {31.24, 24.2, 70.4, 36.08}};
-    test(std::move(A9)*a,  ref, "&&: MOVE skalárral szorzásnál a(z) ", tol);
+    matrix<double> RES= std::move(A9)*a;
+    test2(A9, "&&: MOVE skalárral szorzásnál");
+    test(RES,  ref, "&&: MOVE skalárral szorzásnál a(z) ", tol);
     }
     //skalárral osztás
     {
     matrix<double> ref {2, {1.61363636363636, 1.25, 3.6363636363636363, 1.8636363636363}};
-    test(std::move(A10)/a,  ref, "&&: MOVE skalárral osztásnál a(z) ", tol);
+    matrix<double> RES= std::move(A10)/a;
+    test2(A10, "&&: MOVE skalárral osztásnál");
+    test(RES,  ref, "&&: MOVE skalárral osztásnál a(z) ", tol);
     }
     //teszt: vektorral szorzás  
     {
     matrix<double> ref {2, {70.84, 86.6, 129.44, 161.6}};
-    test(std::move(A11)*C,  ref, "A &&-const&: MOVE vektorral szorzásnál a(z) ", tol);  
+    matrix<double> RES= std::move(A11)*C;
+    test2(A11, "&&-const&: MOVE vektorral szorzásnál");
+    test(RES,  ref, "A &&-const&: MOVE vektorral szorzásnál a(z) ", tol);  
     }
     {
     matrix<double> ref {2, {64, 78.72, 92, 113.36}};
-    test(C*std::move(B4),  ref, "A const&-&&: MOVE vektorral szorzásnál a(z) ", tol);  
+    matrix<double> RES= C*std::move(B4);
+    test2(B4, "const&-&&: MOVE vektorral szorzásnál");
+    test(RES,  ref, "A const&-&&: MOVE vektorral szorzásnál a(z) ", tol);  
     }
     {
     matrix<double> ref {2, {74, 91.48, 137.4, 170.5}};
-    test(std::move(A12)*B,  ref, "A &&-&&: MOVE vektorral szorzásnál a(z) ", tol);  
+    matrix<double> RES= std::move(A12)*B;
+    test2(A12, "&&-&&: MOVE vektorral szorzásnál");
+    test(RES,  ref, "A &&-&&: MOVE vektorral szorzásnál a(z) ", tol);  
     }  
    
     return 0;
