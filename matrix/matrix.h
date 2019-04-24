@@ -52,6 +52,10 @@ public:
     {
     }
 
+	matrix(int N, std::vector<T>&& m): dim{N}, data{std:: move(m)}
+    {
+    }
+
 	matrix(matrix const& cpy): dim{cpy.dim}, data{cpy.data}
     {
     }
@@ -173,6 +177,11 @@ public:
 		friend matrix<T2>&& operator*(matrix<T2> const& m1, matrix<T2> && m2);
 		template<typename T2>
 		friend matrix<T2>&& operator*(matrix<T2> && m1, matrix<T2> const& m2);
+		//kiírás, beolvasás
+		template<typename T2>
+    	friend std::ostream& operator<<(std::ostream& s, matrix<T2> const& m);
+		template<typename T2>
+    	friend std::istream& operator>>(std::istream& s, matrix<T2>& m);
 
 };
 
@@ -371,6 +380,93 @@ matrix<T>&& operator*(matrix<T> && m1, matrix<T> && m2)
 {
     multiplication_matrix1(m1.dim, m1, m2);
 	return std::move(m1);    
+}
+
+
+template<typename T>
+std::ostream& operator<<(std::ostream& s, matrix<T> const& m)
+{
+	int N{m.Dim()};
+	for(int i=0; i < N; i++)
+    {
+        for(int j=0; j < N; j++) 
+        {
+			s << m(i,j);
+			s << " ";
+		}
+		s << "\n";
+	}
+	return s;
+}
+
+template<typename T>
+std::istream& operator>>(std::istream& s, matrix<T>& m)
+{
+	std::vector<T> v; //átmeneti vektor
+	const auto state = s.rdstate();  //kezdeti állapot 
+	const auto pos = s.tellg();	  //olvasási pozíció
+	bool error=false;
+	//
+	std::string tmp;
+	std::getline(s, tmp); //az s-ből az első sort belerakja a tmp-be
+	if(tmp.size() > 0)
+	{
+		T x;
+		int n{0};
+		std::stringstream ss(tmp);   //ss a szóközig a karakterlánc
+		while(ss >> x)
+		{
+			n++; // megszámoljuk h az első sorban hány elem volt
+			v.push_back(x);  //belerakjuk a v-be a beolvasott elemet
+		}
+
+		if (!ss.eof() &&( ss.fail() || ss.bad()))
+		{
+			error=true;
+		}
+		else
+		{
+			
+			for(int i=0; i < n-1 ; i++) 
+			{
+				ss.clear();
+				std::getline(s, tmp);
+				if(tmp.size() > 0)
+				{
+					ss.str(tmp);
+					while(ss >> x)
+					{
+						v.push_back(x);
+					}
+					if (!ss.eof() &&( ss.fail() || ss.bad()))
+					{
+						error=true;
+						break;
+					}
+						
+				}
+			}
+			if(n*n == v.size())
+			{
+				m=matrix<T>(n, std:: move(v));
+			}
+			else
+			{
+				error=true;
+			}
+			
+
+		}
+		
+		if(!s || error) 
+		{
+			s.clear();
+			s.seekg(pos);
+			s.setstate(state);
+		}	
+	}
+	return s; 
+
 }
 
 

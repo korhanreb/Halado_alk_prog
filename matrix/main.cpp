@@ -1,5 +1,6 @@
 #include "matrix.h"
 #include <string>
+#include <sstream>
 
 template<typename T>
 void test(matrix<T> const& result, matrix<T> const& ref, std:: string text, double tol)
@@ -234,6 +235,32 @@ int main(int,char**)
     test2(A12, "&&-&&: MOVE vektorral szorzásnál");
     test(RES,  ref, "A &&-&&: MOVE vektorral szorzásnál a(z) ", tol);  
     }  
+
+    //teszt: kiíratás, beolvasás
+
+    {
+        std:: stringstream ss;
+        ss << C ;
+        if(ss.str()!="4.4 6 \n7.2 8 \n")
+        {
+            std::cout << "Stringkiírás rossz" << std::endl;
+        }
+    }
+
+    {
+        matrix<double> W;
+        std:: stringstream ss("4.4 6.0 \n7.2 8.0 \n");
+        ss >> W;
+        matrix<double>ref={2, {4.4, 6.0, 7.2, 8.0}};
+        test(W,  ref, "A stringbeolvasás rossz", tol);
+        
+    }
+    
+    
+
+
+
+
    
     return 0;
 }
