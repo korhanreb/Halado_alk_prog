@@ -1,5 +1,8 @@
 #include <iostream>
 #include <cmath>
+#include <string>
+#include <sstream>
+#include <vector>
 
 template<typename T>
 struct Vector2d
@@ -103,14 +106,45 @@ auto normalize(Vector2d<T> const& v)
 template<typename T>
 std::ostream& operator<<(std::ostream& o, Vector2d<T> const& v)
 {
-    o << '[' << v.x << ',' << v.y << ']';
+    o  << v.x << ',' << v.y ;
     return o; 
 }
 
 template<typename T>
-std::istream& operator>>(std::istream& i, Vector2d<T>& v)
+std::istream& operator>>(std::istream& s, Vector2d<T>& v)
 {
-    i >> v.x;
-    i >> v.y;
-    return i; 
+	const auto state = s.rdstate();  //kezdeti állapot 
+	const auto pos = s.tellg();	  //olvasási pozíció
+	bool error=false;
+	//
+	std::vector<T> v1;
+	std::string tmp;
+	std::getline(s, tmp); //az s-ből az első sort belerakja a tmp-be
+	if(tmp.size() > 0)
+	{
+		T x;
+		std::stringstream ss(tmp);   //ss a szóközig a karakterlánc
+		while(ss >> x)
+		{
+			v1.push_back(x);  //belerakjuk a v-be a beolvasott elemet
+		}
+		v.x=v1[0];
+		v.y=v1[1];
+
+		if (!ss.eof() &&( ss.fail() || ss.bad()))
+		{
+			error=true;
+		}
+				
+		if(!s || error) 
+		{
+			s.clear();
+			s.seekg(pos);
+			s.setstate(state);
+		}	
+	}
+	return s; 
+
 }
+
+

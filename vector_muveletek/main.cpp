@@ -135,6 +135,31 @@ int main(int, char**) {
         exit(-1);
     }
     }
+
+    {
+        Vector2d<double> d= { 1.2 , 4.8};
+        std:: stringstream ss;
+        ss << d ;
+        if(ss.str()!="1.2,4.8")
+        {
+            std::cout << "Stringkiírás rossz" << std::endl;
+        }
+    }
+
+    {
+        Vector2d<double> d;
+        std:: stringstream ss("1.2 4.8");
+        ss >> d;
+        Vector2d<double>ref={ 1.2 , 4.8};
+        if (std::abs(d.x-ref.x) > tol || std::abs(d.y-ref.y) > tol )
+        {
+            std::cout << "A stringbeolvasás rossz"<<  std::endl;
+            exit(-1);
+        }
+        
+    }
+
+
     
 	return 0;
 }
