@@ -66,19 +66,25 @@ struct Matrix2
 		return *this;
 	}
 
-	template<typename T2>
-    Matrix2& operator/=(Matrix2<T2> const& m )
+	template<typename T>
+    Matrix2& operator/=(Matrix2<T> const& m )
 	{
 		T X1 = x1 ;
 		T X2 = x2 ;
 		T X3 = x3 ;
 		T X4 = x4 ;
-		T det=m.x1*m.x4-m.x2*m.x3;
+		auto det = determinant(m);
 		x1 = static_cast<T>((X1*m.x4-X2*m.x3)/det);
 		x2 = static_cast<T>((-X1*m.x2+X2*m.x1)/det);
 		x3 = static_cast<T>((X3*m.x4-X4*m.x3)/det);
 		x4 = static_cast<T>((-X3*m.x2+X4*m.x1)/det);
 		return *this;
+	}
+
+	template <typename T>
+	auto determinant( Matrix2<T> const& m)
+	{	
+		return (m.x1*m.x4-m.x2*m.x3);		
 	}
 
 		
@@ -111,8 +117,20 @@ Matrix2<T>  adjoint( Matrix2<T> const& m)
 template <typename T>
 auto inv( Matrix2<T> const& m)
 {
-	return 1/determinant(m)*adjoint(m);
+	return adjoint(m)/determinant(m);
 }
+
+// mátrix transzponált
+
+template <typename T>
+Matrix2<T>  transp_matrix( Matrix2<T> const& m)
+{	
+	return {m.x1, m.x3, m.x2, m.x4};		
+}
+
+
+
+
 
 
 // nem beépített műveletek
@@ -173,24 +191,51 @@ auto operator/(Matrix2<T> const& m, T3 const& a)
 // mátrix- vektor szorzás
 
 template<typename T, typename T2>
-auto operator*( Matrix2<T> const& m, Vector2d<T2> const& v )
+auto operator*( Matrix2<T> const& m, Vector2d<T2, true> const& v )
 {
 	using T3 = decltype(m.x1*v.x);
-	return Vector2d<T3>{ m.x1*v.x + m.x2*v.y ,  m.x3*v.x + m.x4*v.y};
+	return Vector2d<T3, true>{ m.x1*v.x + m.x2*v.y ,  m.x3*v.x + m.x4*v.y};
 }
 
 template<typename T, typename T2>
-auto operator*( Vector2d<T2> const& v ,  Matrix2<T> const& m)
+auto operator*( Vector2d<T2, false> const& v ,  Matrix2<T> const& m)
 {
 	using T3 = decltype(m.x1*v.x);
-	return Vector2d<T3>{ m.x1*v.x + m.x3*v.y ,  m.x2*v.x + m.x4*v.y};
+	return Vector2d<T3, false>{ m.x1*v.x + m.x3*v.y ,  m.x2*v.x + m.x4*v.y};
+}
+
+//egyenletrendszer megoldás
+
+template<typename T, typename T2>
+auto eq_solver( Matrix2<T> const& m, Vector2d<T2, true> const& v )
+{
+	return  inv(m)*v;
+}
+
+//vektor -vektor szorzás
+
+template<typename T, typename T2>
+auto dot( Vector2d<T, false> const& v, Vector2d<T2, true> const& u )
+{
+	using T3 = decltype(v.x*u.x);	
+	T3 res=u.x*v.x + u.y*v.y;
+	return res;
+		
+}
+
+template<typename T, typename T2>
+auto dot( Vector2d<T, true> const& v, Vector2d<T2, false> const& u )
+{
+	using T3 = decltype(v.x*u.x);
+	Matrix2<T3> RES= { v.x*u.x ,v.x*u.y , v.y*u.x , v.y*u.y};
+	return RES ;
 }
 
 
 template<typename T>
 std::ostream& operator<<(std::ostream& o, Matrix2<T> const& m)
 {
-    o << '[' << m.x1 << ',' << m.x2 <<  m.x3 << ',' << m.x4 << ']';
+    o << '[' << m.x1 << ',' << m.x2 << ',' <<  m.x3 << ',' << m.x4 << ']';
     return o; 
 }
 

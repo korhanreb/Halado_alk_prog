@@ -1,21 +1,21 @@
 #include <iostream>
 #include <cmath>
 
-template<typename T>
+template<typename T,bool isRow>
 struct Vector2d
 {
 	T x, y;
 
-	template<typename T2>
-	Vector2d<T>& operator+=( Vector2d<T2> const& v )
+	template<typename T2, bool b>
+	Vector2d<T, b>& operator+=( Vector2d<T2,b> const& v )
 	{
 		x = static_cast<T>(x + v.x);;
 		y = static_cast<T>(y + v.y);
 		return *this;
 	}
 
-	template<typename T2>
-    Vector2d<T>& operator-=( Vector2d<T2> const& v )
+	template<typename T2, bool b>
+    Vector2d<T, b>& operator-=( Vector2d<T2,b> const& v )
 	{
 		x = static_cast<T>(x - v.x);
 		y = static_cast<T>(y - v.y);
@@ -39,76 +39,81 @@ struct Vector2d
 	}
 };
 
-template<typename T, typename T2>
-auto operator+( Vector2d<T> const& v, Vector2d<T2> const& u )
+template<typename T, typename T2, bool b>
+auto operator+( Vector2d<T, b> const& v, Vector2d<T2, b> const& u )
 {
 	using T3 = decltype(v.x+u.x);
-	return Vector2d<T3>{ v.x + u.x, v.y + u.y };
+	return Vector2d<T3,b>{ v.x + u.x, v.y + u.y };
 }
 
-template<typename T, typename T2>
-auto operator-( Vector2d<T> const& v, Vector2d<T2> const& u )
+template<typename T, typename T2, bool b>
+auto operator-( Vector2d<T, b> const& v, Vector2d<T2, b> const& u )
 {
 	using T3 = decltype(v.x-u.x);
-	return Vector2d<T3>{ v.x - u.x, v.y - u.y };
+	return Vector2d<T3,b>{ v.x - u.x, v.y - u.y };
 }
 
 
-template<typename T, typename T3>
-auto operator*(T3 const& a , Vector2d<T> const& v)
+template<typename T, typename T3, bool b>
+auto operator*(T3 const& a , Vector2d<T, b> const& v)
 {
 	using T4 = decltype(a*v.x);
-	return Vector2d<T4>{ a*v.x , a*v.y};
+	return Vector2d<T4,b>{ a*v.x , a*v.y};
 }
 
-template<typename T, typename T3>
-auto operator*(Vector2d<T> const& v, T3 const& a )
+template<typename T, typename T3, bool b>
+auto operator*(Vector2d<T, b> const& v, T3 const& a )
 {
 	using T4 = decltype(v.x*a);
-	return Vector2d<T4>{ v.x*a , v.y*a};
+	return Vector2d<T4,b>{ v.x*a , v.y*a};
 }
 
-template<typename T, typename T3>
-auto operator/(Vector2d<T> const& v, T3 const& a )
+template<typename T, typename T3, bool b>
+auto operator/(Vector2d<T, b> const& v, T3 const& a )
 {
 	using T4 = decltype(v.x/a);
-	return Vector2d<T4> { v.x/a , v.y/a };
-}
-
-template<typename T, typename T2>
-auto dot( Vector2d<T> const& v, Vector2d<T2> const& u )
-{
-	return u.x*v.x + u.y*v.y;
+	return Vector2d<T4, b> { v.x/a , v.y/a };
 }
 
 template<typename T>
-auto sqlength(Vector2d<T> const& v)
+auto transp_vector(Vector2d<T, true> const& v)
+{
+	return  Vector2d<T, false> { v.x , v.y};;
+}
+template<typename T>
+auto transp_vector(Vector2d<T, false> const& v)
+{
+	return  Vector2d<T, true> { v.x , v.y};;
+}
+
+template<typename T, bool b>
+auto sqlength(Vector2d<T, b> const& v)
 {
 	return v.x*v.x+v.y*v.y;
 }
 
-template<typename T>
-auto length(Vector2d<T> const& v)
+template<typename T, bool b>
+auto length(Vector2d<T, b> const& v)
 {
 	return std::sqrt(v.x*v.x+v.y*v.y);
 }
 
-template<typename T>
-auto normalize(Vector2d<T> const& v)
+template<typename T, bool b>
+auto normalize(Vector2d<T, b> const& v)
 {
 	return v/ length(v);
 }
 
 
-template<typename T>
-std::ostream& operator<<(std::ostream& o, Vector2d<T> const& v)
+template<typename T, bool b>
+std::ostream& operator<<(std::ostream& o, Vector2d<T, b> const& v)
 {
     o << '[' << v.x << ',' << v.y << ']';
     return o; 
 }
 
-template<typename T>
-std::istream& operator>>(std::istream& i, Vector2d<T>& v)
+template<typename T, bool b>
+std::istream& operator>>(std::istream& i, Vector2d<T, b>& v)
 {
     i >> v.x;
     i >> v.y;
