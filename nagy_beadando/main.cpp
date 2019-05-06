@@ -158,7 +158,7 @@ int main(int, char**) {
     // vektor- vektor szorzás
     {
     double ref = -81.6;
-    double test = dot(e_c, b_r);
+    double test = dot(e_r, b_c);
     if (std::abs(test - ref) > tol)
     {
 		std::cout << "Skalár szorzat fügvényével valami baj van. " << std::endl;
@@ -167,7 +167,7 @@ int main(int, char**) {
 
     {
     Matrix2<double>REF = {-51, 76.5, 20.4, -30.6};
-    Matrix2<double> TEST = dot(b_r, e_c);
+    Matrix2<double> TEST = dot(b_c, e_r);
     test1(TEST, REF, "oszlop vektor sorvektorral való szorzása", tol);
     }
 
@@ -214,37 +214,37 @@ int main(int, char**) {
     //egyenletrendszer megoldás
 
     {
-    Vector2d<double, true> Ref {-67.1, -115.666667};
-    Vector2d<double, true> Test = eq_solver( M, c_r );
+    Vector2d<double, false> Ref {-67.1, -115.666667};
+    Vector2d<double, false> Test = eq_solver( M, c_c );
     test2(Test,  Ref, "Az egyenletrendszer megoldástál ", tol);
     }
 
 
     // mátrix- vektor szorzás
     {
-    Vector2d<double, true> ref {-124.95, -324.36};
-    test2(A*b_r,  ref, "A*b_r: const&- const&: mátrix- vektor szorzásnál a(z) ", tol);  
+    Vector2d<double, false> ref {-124.95, -324.36};
+    test2(A*b_c,  ref, "A*b_r: const&- const&: mátrix- vektor szorzásnál a(z) ", tol);  
     }
     {
-    Vector2d<double, true> ref {-224.15, -271.92};
-    test2(A*c_r,  ref, "A*c_r: const&- const&: mátrix- vektor szorzásnál a(z) ", tol);  
+    Vector2d<double, false> ref {-224.15, -271.92};
+    test2(A*c_c,  ref, "A*c_r: const&- const&: mátrix- vektor szorzásnál a(z) ", tol);  
     }
     {
-    Vector2d<double, true> ref {-9.2, -9.6};
-    test2(C*e_r,  ref, "C*e_r: const&-const&: mátrix- vektor szorzásnál a(z) ", tol);  
+    Vector2d<double, false> ref {-9.2, -9.6};
+    test2(C*e_c,  ref, "C*e_r: const&-const&: mátrix- vektor szorzásnál a(z) ", tol);  
     }
 
     {
-    Vector2d<double, true> ref {-283, -362};
-    test2(C*c_r,  ref, "C*c_r: const&-const&: mátrix- vektor szorzásnál a(z) ", tol);  
+    Vector2d<double, false> ref {-283, -362};
+    test2(C*c_c,  ref, "C*c_r: const&-const&: mátrix- vektor szorzásnál a(z) ", tol);  
     }
     {
-    Vector2d<double, false> ref {-12.8, -12};
-    test2(e_c*C,  ref, "e_c*C: const&-const&: vektor- mátrix szorzásnál a(z) ", tol);  
+    Vector2d<double, true> ref {-12.8, -12};
+    test2(e_r*C,  ref, "e_c*C: const&-const&: vektor- mátrix szorzásnál a(z) ", tol);  
     }
     {
-    Vector2d<double, false> ref {-349.72, -375.8};
-    test2(c_c*C,  ref, "c_c*C: const&-const&: vektor- mátrix szorzásnál a(z) ", tol);  
+    Vector2d<double, true> ref {-349.72, -375.8};
+    test2(c_r*C,  ref, "c_c*C: const&-const&: vektor- mátrix szorzásnál a(z) ", tol);  
     }
 
 

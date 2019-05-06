@@ -1,21 +1,25 @@
 #include <iostream>
 #include <cmath>
 
+template<typename T> struct Matrix2;
+
 template<typename T,bool isRow>
 struct Vector2d
 {
 	T x, y;
 
-	template<typename T2, bool b>
-	Vector2d<T, b>& operator+=( Vector2d<T2,b> const& v )
+	Vector2d<T, true>& Vector2d<T,isRow>::operator*=( Matrix2<T> const& m);  //baj van
+
+	template<typename T2>
+	Vector2d<T, isRow>& operator+=( Vector2d<T2, isRow> const& v )
 	{
 		x = static_cast<T>(x + v.x);;
 		y = static_cast<T>(y + v.y);
 		return *this;
 	}
 
-	template<typename T2, bool b>
-    Vector2d<T, b>& operator-=( Vector2d<T2,b> const& v )
+	template<typename T2>
+    Vector2d<T, isRow>& operator-=( Vector2d<T2, isRow> const& v )
 	{
 		x = static_cast<T>(x - v.x);
 		y = static_cast<T>(y - v.y);
@@ -75,16 +79,12 @@ auto operator/(Vector2d<T, b> const& v, T3 const& a )
 	return Vector2d<T4, b> { v.x/a , v.y/a };
 }
 
-template<typename T>
-auto transp_vector(Vector2d<T, true> const& v)
+template<typename T, bool b>
+auto transp_vector(Vector2d<T, b> const& v)
 {
-	return  Vector2d<T, false> { v.x , v.y};;
+	return  Vector2d<T, !b> { v.x , v.y};;
 }
-template<typename T>
-auto transp_vector(Vector2d<T, false> const& v)
-{
-	return  Vector2d<T, true> { v.x , v.y};;
-}
+
 
 template<typename T, bool b>
 auto sqlength(Vector2d<T, b> const& v)

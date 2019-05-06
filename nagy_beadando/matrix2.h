@@ -90,6 +90,12 @@ struct Matrix2
 		
 };
 
+template<typename T, bool isRow>   //baj van
+Vector2d<T, true>& Vector2d<T, isRow>::operator*=( Matrix2<T> const& m)
+{
+    
+}
+
 template <typename T>
 auto multiplication_matrix(  Matrix2<T> const& m1, Matrix2<T> const& m2)
 {
@@ -191,23 +197,23 @@ auto operator/(Matrix2<T> const& m, T3 const& a)
 // mátrix- vektor szorzás
 
 template<typename T, typename T2>
-auto operator*( Matrix2<T> const& m, Vector2d<T2, true> const& v )
+auto operator*( Matrix2<T> const& m, Vector2d<T2, false> const& v )
 {
 	using T3 = decltype(m.x1*v.x);
-	return Vector2d<T3, true>{ m.x1*v.x + m.x2*v.y ,  m.x3*v.x + m.x4*v.y};
+	return Vector2d<T3, false>{ m.x1*v.x + m.x2*v.y ,  m.x3*v.x + m.x4*v.y};
 }
 
 template<typename T, typename T2>
-auto operator*( Vector2d<T2, false> const& v ,  Matrix2<T> const& m)
+auto operator*( Vector2d<T2, true> const& v ,  Matrix2<T> const& m)
 {
 	using T3 = decltype(m.x1*v.x);
-	return Vector2d<T3, false>{ m.x1*v.x + m.x3*v.y ,  m.x2*v.x + m.x4*v.y};
+	return Vector2d<T3, true>{ m.x1*v.x + m.x3*v.y ,  m.x2*v.x + m.x4*v.y};
 }
 
 //egyenletrendszer megoldás
 
 template<typename T, typename T2>
-auto eq_solver( Matrix2<T> const& m, Vector2d<T2, true> const& v )
+auto eq_solver( Matrix2<T> const& m, Vector2d<T2, false> const& v )
 {
 	return  inv(m)*v;
 }
@@ -215,7 +221,7 @@ auto eq_solver( Matrix2<T> const& m, Vector2d<T2, true> const& v )
 //vektor -vektor szorzás
 
 template<typename T, typename T2>
-auto dot( Vector2d<T, false> const& v, Vector2d<T2, true> const& u )
+auto dot( Vector2d<T, true> const& v, Vector2d<T2, false> const& u )
 {
 	using T3 = decltype(v.x*u.x);	
 	T3 res=u.x*v.x + u.y*v.y;
@@ -224,7 +230,7 @@ auto dot( Vector2d<T, false> const& v, Vector2d<T2, true> const& u )
 }
 
 template<typename T, typename T2>
-auto dot( Vector2d<T, true> const& v, Vector2d<T2, false> const& u )
+auto dot( Vector2d<T, false> const& v, Vector2d<T2, true> const& u )
 {
 	using T3 = decltype(v.x*u.x);
 	Matrix2<T3> RES= { v.x*u.x ,v.x*u.y , v.y*u.x , v.y*u.y};
