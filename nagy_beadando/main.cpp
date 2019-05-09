@@ -283,6 +283,11 @@ int main(int, char**) {
     test1(A6/=B,  ref, "A beépített mátrixxal osztásnál a(z) ", tol);  
     }
 
+    {
+    Vector2d<double, true> ref {-56.1, -73.95};
+    test2(b_r*=B,  ref, "A beépített vektor mátrixxal szorzással a(z) ", tol);  // it a b_r átíródott
+    }
+
     
 
 

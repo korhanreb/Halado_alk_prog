@@ -66,8 +66,8 @@ struct Matrix2
 		return *this;
 	}
 
-	template<typename T>
-    Matrix2& operator/=(Matrix2<T> const& m )
+	template<typename T2>
+    Matrix2& operator/=(Matrix2<T2> const& m )
 	{
 		T X1 = x1 ;
 		T X2 = x2 ;
@@ -81,8 +81,8 @@ struct Matrix2
 		return *this;
 	}
 
-	template <typename T>
-	auto determinant( Matrix2<T> const& m)
+	template<typename T2>
+	auto determinant( Matrix2<T2> const& m)
 	{	
 		return (m.x1*m.x4-m.x2*m.x3);		
 	}
@@ -93,8 +93,13 @@ struct Matrix2
 template<typename T, bool isRow>   //baj van
 Vector2d<T, true>& Vector2d<T, isRow>::operator*=( Matrix2<T> const& m)
 {
-    
+    T X=x;
+	T Y=y;
+	x=m.x1*X + m.x3*Y;
+	y=m.x2*X + m.x4*Y;
+	return *this;
 }
+
 
 template <typename T>
 auto multiplication_matrix(  Matrix2<T> const& m1, Matrix2<T> const& m2)

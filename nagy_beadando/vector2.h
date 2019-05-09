@@ -8,7 +8,7 @@ struct Vector2d
 {
 	T x, y;
 
-	Vector2d<T, true>& Vector2d<T,isRow>::operator*=( Matrix2<T> const& m);  //baj van
+	Vector2d<T, true>& operator*=( Matrix2<T> const& m);  //baj van
 
 	template<typename T2>
 	Vector2d<T, isRow>& operator+=( Vector2d<T2, isRow> const& v )
