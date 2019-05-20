@@ -1,6 +1,6 @@
 # 2x2 mátrix struktúra és NxN-es mátrix osztály
 
-Azért szerepel mind2 feladat, mert a 2x2 mátrix struktúrához írtam a jegyzőkönyvet, az NxN-es mátrix osztályhoz pedig a cmake-et készítettem el, (mivel a 2x2 mátrix struktúránál nem nagyon tudtam mit ábrázolni).
+Azért szerepel mind kettő feladat, mert a 2x2 mátrix struktúrához írtam a jegyzőkönyvet, az NxN-es mátrix osztályhoz pedig a cmake-et készítettem el, (mivel a 2x2 mátrix struktúránál nem nagyon tudtam mit ábrázolni).
 
 ELTE BSc Fzika
 
