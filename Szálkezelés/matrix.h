@@ -528,7 +528,7 @@ std::istream& operator>>(std::istream& s, matrix<T>& m)
 //----------------------------------------------------------------------------------------------
 
 template <typename T>
-auto multiplication_matrix_parallel( int N,   matrix<T> const& m1, matrix<T> const& m2, matrix<T> & m3)
+void multiplication_matrix_parallel( int N,   matrix<T> const& m1, matrix<T> const& m2, matrix<T> & m3)
 {
 	auto f = [&](int const& a, int const& b)  
 	{
@@ -544,31 +544,20 @@ auto multiplication_matrix_parallel( int N,   matrix<T> const& m1, matrix<T> con
 				for(int k=0; k < N; k++)
 				{
 					h += m1(i,k) * m2(k,j);
-				}  
-				hold[(i - a) * N + j] = h;          
+				} 
+				m3(i, j) = h;				         
 			} 
 		} 
-		return hold;
+				
 	};
 
 	int a= floor(N/2);
 
 	auto future_0 = std::async( std::launch::async, f , 0, a );
 	auto future_1 = std::async( std::launch::async, f, a, N );
-	auto holder_0 = future_0.get();
-	auto holder_1 = future_1.get();
+	
 
-	for (int i=0; i < N * N; i++)
-    {
-        if (i < a  * N )
-        {
-           m3[i] = holder_0[i]; 
-        }
-		else
-        {
-            m3[i] = holder_1[i - a * N];
-        }
-	}
+
 
 }
 

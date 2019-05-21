@@ -25,10 +25,14 @@ for (int j=1; j<100; ++j)  //dim megadása
 
     matrix<double> A(j);
     matrix<double> B(j);   
+    matrix<double> C(j);
+    matrix<double> D(j);
 
     
     std::generate(A.begin(), A.end(), [&](){ return distr(gen) ;});
     std::generate(B.begin(), B.end(), [&](){ return distr(gen) ;});
+    std::generate(C.begin(), C.end(), [&](){ return distr(gen) ;});
+    std::generate(D.begin(), D.end(), [&](){ return distr(gen) ;});
 
 
     int N{100};  //hányszor végezzük el az időmérést
@@ -42,7 +46,7 @@ for (int j=1; j<100; ++j)  //dim megadása
         auto t2 = std::chrono::high_resolution_clock::now();
     
         auto t3 = std::chrono::high_resolution_clock::now();
-        m_m_p(A, B);
+        m_m_p(C, D);
         auto t4 = std::chrono::high_resolution_clock::now();
     
         T1[i] = std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count();
