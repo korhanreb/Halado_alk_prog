@@ -558,7 +558,7 @@ auto multiplication_matrix_parallel( int N,   matrix<T> const& m1, matrix<T> con
 	auto holder_0 = future_0.get();
 	auto holder_1 = future_1.get();
 
-	for (int i{0}; i < N * N; i++)
+	for (int i=0; i < N * N; i++)
     {
         if (i < a  * N )
         {
